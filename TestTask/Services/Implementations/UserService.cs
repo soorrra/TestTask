@@ -19,7 +19,7 @@ namespace TestTask.Services.Implementations
         {
             var users = await _context.Users.ToListAsync();
             var orders = await _context.Orders.Where(o => o.CreatedAt.Year == 2003 && o.Status == OrderStatus.Delivered).ToListAsync();
-
+            // Count total amount of product for each user
             var userOrderAmounts = users.ToDictionary(user => user.Id, user => 0);
             foreach (var order in orders)
             {
@@ -28,7 +28,7 @@ namespace TestTask.Services.Implementations
                     userOrderAmounts[order.UserId] += order.Price * order.Quantity;
                 }
             }
-
+            // Get user with max product amount in 2003
             var topUser = users.OrderByDescending(user => userOrderAmounts[user.Id]).FirstOrDefault();
 
             return topUser;
@@ -36,9 +36,9 @@ namespace TestTask.Services.Implementations
         public async Task<List<User>> GetUsers()
         {
             var orders = await _context.Orders.Where(o => o.CreatedAt.Year == 2010 && o.Status == OrderStatus.Paid).ToListAsync();
-
+            // Get Ids list users with paid orders in 2010  
             var userIds = orders.Select(order => order.UserId).Distinct().ToList();
-
+            // Get users 
             var users = await _context.Users.Where(user => userIds.Contains(user.Id)).ToListAsync();
 
             return users;
